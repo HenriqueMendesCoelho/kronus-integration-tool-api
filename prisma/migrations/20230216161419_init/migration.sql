@@ -3,7 +3,7 @@ CREATE TABLE "User" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "passSalt" TEXT NOT NULL
+    "salt" TEXT NOT NULL
 );
 
 -- CreateTable
