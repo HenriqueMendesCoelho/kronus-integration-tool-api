@@ -1,7 +1,8 @@
 export class ApiKey {
-  public key: String;
+  public key: string;
+  public name: string;
 
-  constructor(props: string) {
+  constructor(props: ApiKey) {
     Object.assign(this, props);
   }
 }
