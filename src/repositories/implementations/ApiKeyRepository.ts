@@ -47,6 +47,21 @@ export class ApiKeyRepository implements IApiKeyRepository {
     }
   }
 
+  async delete(key: string): Promise<void> {
+    try {
+      this.prisma.apiKey.delete({
+        where: {
+          key: key,
+        },
+      });
+      return;
+    } catch (error) {
+      throw new Error(error || 'Error during apikey deletion');
+    } finally {
+      await this.disconnectDB();
+    }
+  }
+
   private async disconnectDB(): Promise<void> {
     this.prisma.$disconnect();
   }
