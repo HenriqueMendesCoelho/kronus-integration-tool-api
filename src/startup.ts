@@ -13,14 +13,17 @@ async function validationIfExistUser(): Promise<void> {
 
   const randomPassword = crypto.randomBytes(30).toString('base64').slice(0, 30);
 
-  createUserUseCase.execute('kronus-adm', randomPassword);
+  const userCreated = await createUserUseCase.execute(
+    'kronus-ing-tool',
+    randomPassword
+  );
   console.log(
     '\n',
     '**** First start ****',
     '\n',
     'New user have been created',
     '\n',
-    'username: kronus-adm',
+    `username: ${userCreated.username}`,
     '\n',
     `password: ${randomPassword}`,
     '\n',
