@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import { SearchApiKey } from './searchApiKey/SearchApiKey';
 import { CreateApiKeyUseCase } from './createApiKey/CreateApiKeyUseCase';
+import { DeleteApiKeyUseCase } from './deleteApiKey/DeleteApiKeyUseCase';
 
 export class ApiKeyController {
   constructor(
     private createApiKeyUseCase: CreateApiKeyUseCase,
-    private searchApiKey: SearchApiKey
+    private searchApiKey: SearchApiKey,
+    private deleteApiKey: DeleteApiKeyUseCase
   ) {}
 
   async createKey(request: Request, response: Response): Promise<Response> {
@@ -34,6 +36,24 @@ export class ApiKeyController {
       }
 
       return response.status(204).send();
+    } catch (error) {
+      return response
+        .status(500)
+        .json({
+          sucess: false,
+          message: 'Internal server error',
+          timestamp: Date.now(),
+        })
+        .send();
+    }
+  }
+
+  async delete(request: Request, response: Response): Promise<Response> {
+    try {
+      const { key } = request.body;
+      await this.deleteApiKey.execute(key);
+
+      return response.status(200).send();
     } catch (error) {
       return response
         .status(500)
