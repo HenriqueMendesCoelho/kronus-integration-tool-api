@@ -1,8 +1,9 @@
 import Router from 'express';
 
 import { apiKeyController } from './useCases/apiKey';
-import { secure } from './middleware/SecureEndpointMiddleware';
+import { secure, secureApiKey } from './middleware/SecureEndpointMiddleware';
 import { jwtController } from './useCases/jwt';
+import { sendGridController } from './useCases/sendgrid';
 
 const router = Router();
 const basePathV1 = '/api/v1';
@@ -21,6 +22,10 @@ router.post(`${basePathV1}/key`, secure, (request, response) => {
 
 router.delete(`${basePathV1}/key`, secure, (request, response) => {
   return apiKeyController.delete(request, response);
+});
+
+router.post(`${basePathV1}/sendgrid/template`, (request, response) => {
+  return sendGridController.sendMailTemplate(request, response);
 });
 
 export { router };
