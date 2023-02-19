@@ -15,9 +15,9 @@ async function secure(
     return;
   }
 
-  const verify = verifyJwtTokenUseCase.verify(jwt);
+  const verify = verifyJwtTokenUseCase.isValid(jwt);
 
-  if (verify) {
+  if (!verify) {
     response.status(403).end();
     return;
   }
