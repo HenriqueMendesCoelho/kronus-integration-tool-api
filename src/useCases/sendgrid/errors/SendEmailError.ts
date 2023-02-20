@@ -10,7 +10,9 @@ export class SendEmailError extends CustomError {
   serializeErrors() {
     return [
       {
+        sucess: false,
         message: 'Error to send e-mail',
+        timestamp: Date.now(),
       },
     ];
   }

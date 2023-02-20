@@ -4,6 +4,7 @@ import { apiKeyController } from './useCases/apiKey';
 import { secure, secureApiKey } from './middleware/SecureEndpointMiddleware';
 import { jwtController } from './useCases/jwt';
 import { sendGridController } from './useCases/sendgrid';
+import { userController } from './useCases/user';
 
 const router = Router();
 const basePathV1 = '/api/v1';
@@ -24,8 +25,16 @@ router.delete(`${basePathV1}/key`, secure, (request, response) => {
   return apiKeyController.delete(request, response);
 });
 
-router.post(`${basePathV1}/sendgrid/template`, (request, response) => {
-  return sendGridController.sendMailTemplate(request, response);
+router.post(
+  `${basePathV1}/sendgrid/template`,
+  secureApiKey,
+  (request, response) => {
+    return sendGridController.sendMailTemplate(request, response);
+  }
+);
+
+router.put(`${basePathV1}/user`, secure, (request, response) => {
+  return userController.update(request, response);
 });
 
 export { router };

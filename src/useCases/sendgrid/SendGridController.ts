@@ -22,7 +22,7 @@ export class SendGridController {
       if (error instanceof CustomError) {
         return response
           .status(error.statusCode)
-          .send({ errors: error.serializeErrors() });
+          .send(...error.serializeErrors());
       }
       response.status(500).send(error);
     }
