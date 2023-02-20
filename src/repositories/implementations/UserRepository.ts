@@ -57,13 +57,13 @@ export class UserRepository implements IUserRepository {
           username,
         },
         data: {
-          id: user.id,
           username: user.username,
           password: user.password,
+          salt: user.salt,
         },
       });
 
-      return obj || null;
+      return obj || user;
     } catch (error) {
       throw Error(error);
     } finally {
