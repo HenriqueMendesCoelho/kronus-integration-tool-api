@@ -31,6 +31,7 @@ export class CreateJwtTokenUseCase {
         exp,
         issuer: 'Kronus Integration tool app',
         audience: 'Kronus Integration tool user',
+        username,
       },
       this.secret
     );

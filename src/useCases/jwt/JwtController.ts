@@ -15,7 +15,7 @@ export class JwtController {
       if (error instanceof CustomError) {
         return response
           .status(error.statusCode)
-          .send({ errors: error.serializeErrors() });
+          .send(...error.serializeErrors());
       }
 
       return response.status(500).send(error);

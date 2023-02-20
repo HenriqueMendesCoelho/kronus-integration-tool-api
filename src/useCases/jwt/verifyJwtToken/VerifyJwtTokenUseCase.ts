@@ -22,7 +22,7 @@ export class VerifyJwtTokenUseCase {
       const isValid = jwt.verify(token, this.secret) as PayloadToken;
       return isValid.username;
     } catch {
-      return false;
+      return '';
     }
   }
 }

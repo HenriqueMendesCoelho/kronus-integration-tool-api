@@ -10,7 +10,9 @@ export class InvalidCredencialsError extends CustomError {
   serializeErrors() {
     return [
       {
+        sucess: false,
         message: 'Invalid Credencials',
+        timestamp: Date.now(),
       },
     ];
   }
