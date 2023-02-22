@@ -5,6 +5,7 @@ import { secure, secureApiKey } from './middleware/SecureEndpointMiddleware';
 import { jwtController } from './useCases/jwt';
 import { sendGridController } from './useCases/sendgrid';
 import { userController } from './useCases/user';
+import { tmdbController } from './useCases/tmdb';
 
 const router = Router();
 const basePathV1 = '/api/v1';
@@ -25,6 +26,10 @@ router.delete(`${basePathV1}/key`, secure, (request, response) => {
   return apiKeyController.delete(request, response);
 });
 
+router.put(`${basePathV1}/user`, secure, (request, response) => {
+  return userController.update(request, response);
+});
+
 router.post(
   `${basePathV1}/sendgrid/template`,
   secureApiKey,
@@ -33,8 +38,28 @@ router.post(
   }
 );
 
-router.put(`${basePathV1}/user`, secure, (request, response) => {
-  return userController.update(request, response);
+router.get(`${basePathV1}/movie`, secureApiKey, (request, response) => {
+  return tmdbController.seachMoviesByName(request, response);
 });
+
+router.get(`${basePathV1}/movie/:id`, secureApiKey, (request, response) => {
+  return tmdbController.findMovieById(request, response);
+});
+
+router.get(
+  `${basePathV1}/movie/:id/credits`,
+  secureApiKey,
+  (request, response) => {
+    return tmdbController.findMovieCreditsById(request, response);
+  }
+);
+
+router.get(
+  `${basePathV1}/movie/:id/summary`,
+  secureApiKey,
+  (request, response) => {
+    return tmdbController.movieResume(request, response);
+  }
+);
 
 export { router };

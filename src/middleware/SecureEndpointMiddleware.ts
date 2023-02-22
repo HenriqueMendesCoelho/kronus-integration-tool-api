@@ -34,7 +34,7 @@ async function secureApiKey(
 
   const apikey = request.headers['authorization'];
 
-  if (!apikey || apikey.slice(0, 9) !== 'Bearer Kb.') {
+  if (!apikey || apikey.slice(0, 10) !== 'Bearer Kb.') {
     response.status(403).end();
     return;
   }
