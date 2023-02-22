@@ -10,7 +10,7 @@ export class TmdbRepository implements ITmdbRepository {
   private tmdbUrl = process.env.TMDB_ORIGIN_V3;
   private tmdbKey = process.env.TMDB_API_KEY_V3;
 
-  async findMovieByName(params: {
+  async findMoviesByName(params: {
     query: string;
     language?: string;
     page?: number;
@@ -23,10 +23,14 @@ export class TmdbRepository implements ITmdbRepository {
       include_adult: params.include_adult || 'false',
     });
 
-    const movies = await axios.get(
-      `${this.tmdbUrl}/search/movie?api_key=${this.tmdbKey}&${paramsString}`
-    );
-    return movies.data;
+    try {
+      const movies = await axios.get(
+        `${this.tmdbUrl}/search/movie?api_key=${this.tmdbKey}&${paramsString}`
+      );
+      return movies.data;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
   async findMovieById(
     id: number,
@@ -42,7 +46,7 @@ export class TmdbRepository implements ITmdbRepository {
     );
     return movie.data;
   }
-  async findMovieByIdCredits(
+  async findMovieCreditsById(
     id: number,
     params: {
       language?: string;

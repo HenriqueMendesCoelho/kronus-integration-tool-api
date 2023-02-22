@@ -5,7 +5,7 @@ import {
 } from '../useCases/tmdb/types/TypeMovies';
 
 export interface ITmdbRepository {
-  findMovieByName(params: {
+  findMoviesByName(params: {
     query: string;
     language?: string;
     page?: number;
@@ -17,7 +17,7 @@ export interface ITmdbRepository {
       language?: string;
     }
   ): Promise<MovieFoundById>;
-  findMovieByIdCredits(
+  findMovieCreditsById(
     id: number,
     params: {
       language?: string;
