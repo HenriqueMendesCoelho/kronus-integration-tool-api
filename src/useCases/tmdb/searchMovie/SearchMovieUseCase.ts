@@ -1,9 +1,9 @@
 import { ITmdbRepository } from '../../../repositories/ITmdbRepository';
 
-export class MovieSummaryUseCase {
+export class SearchMovieUseCase {
   constructor(private tmdbRepository: ITmdbRepository) {}
 
-  async execute(id: number) {
+  async summary(id: number) {
     const moviePortuguese = await this.tmdbRepository.findMovieById(id, {});
     const movieEnglish = await this.tmdbRepository.findMovieById(id, {
       language: 'en-Us',

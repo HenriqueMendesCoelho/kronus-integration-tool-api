@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import { MovieSummaryUseCase } from './movieSummary/MovieSummaryUseCase';
+import { SearchMovieUseCase } from './searchMovie/SearchMovieUseCase';
 
 export class TmdbController {
-  constructor(private movieSummaryUseCase: MovieSummaryUseCase) {}
+  constructor(private searchMovieUseCase: SearchMovieUseCase) {}
 
   async movieResume(request: Request, response: Response) {
     const { id } = request.params;
 
     try {
-      const movieResume = await this.movieSummaryUseCase.execute(parseInt(id));
+      const movieResume = await this.searchMovieUseCase.summary(parseInt(id));
       if (!movieResume) {
         return response.status(204).send();
       }
