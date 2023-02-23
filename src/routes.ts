@@ -58,7 +58,7 @@ router.get(
   `${basePathV1}/movie/:id/summary`,
   secureApiKey,
   (request, response) => {
-    return tmdbController.movieResume(request, response);
+    return tmdbController.movieSummary(request, response);
   }
 );
 

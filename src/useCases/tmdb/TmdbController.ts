@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { CustomError } from '../../err/CustomError';
 import { SearchMovieUseCase } from './searchMovie/SearchMovieUseCase';
 
 export class TmdbController {
@@ -86,7 +87,7 @@ export class TmdbController {
     }
   }
 
-  async movieResume(request: Request, response: Response) {
+  async movieSummary(request: Request, response: Response) {
     const { id } = request.params;
 
     try {
@@ -97,6 +98,11 @@ export class TmdbController {
 
       return response.status(200).json(movieResume).send();
     } catch (error) {
+      if (error instanceof CustomError) {
+        return response
+          .status(error.statusCode)
+          .send(...error.serializeErrors());
+      }
       return response.status(500).send(error);
     }
   }
