@@ -32,14 +32,16 @@ async function secureApiKey(
 ) {
   const apiKeyRepository = new ApiKeyRepository();
 
-  const apikey = request.headers['authorization'];
+  const headerAuthorization = request.headers['authorization'];
+  const apikey = headerAuthorization.slice(7);
+  const startsWithKb = apikey.slice(0, 3) === 'Kb.';
 
-  if (!apikey || apikey.slice(0, 10) !== 'Bearer Kb.') {
+  if (!apikey || !startsWithKb) {
     response.status(403).end();
     return;
   }
 
-  const apikeyExists = apiKeyRepository.findByKey(apikey);
+  const apikeyExists = await apiKeyRepository.findByKey(apikey);
 
   if (!apikeyExists) {
     response.status(403).end();
