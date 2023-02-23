@@ -1,14 +1,11 @@
 import { User } from '../../models/User';
 import { IUserRepository } from '../IUserRepository';
-
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../prisma/PrismaClient';
 
 export class UserRepository implements IUserRepository {
-  private prisma = new PrismaClient();
-
   async findByUsername(username: string): Promise<User> {
     try {
-      const obj = await this.prisma.user.findFirst({
+      const obj = await prisma.user.findFirst({
         where: {
           username,
         },
@@ -23,7 +20,7 @@ export class UserRepository implements IUserRepository {
   }
   async findAll(): Promise<User[]> {
     try {
-      const obj = await this.prisma.user.findMany();
+      const obj = await prisma.user.findMany();
 
       return obj || null;
     } catch (error) {
@@ -34,7 +31,7 @@ export class UserRepository implements IUserRepository {
   }
   async save(user: User): Promise<User> {
     try {
-      const obj = await this.prisma.user.create({
+      const obj = await prisma.user.create({
         data: {
           id: user.id,
           username: user.username,
@@ -52,7 +49,7 @@ export class UserRepository implements IUserRepository {
   }
   async update(username: string, user: User): Promise<User> {
     try {
-      const obj = await this.prisma.user.update({
+      const obj = await prisma.user.update({
         where: {
           username,
         },
@@ -72,6 +69,6 @@ export class UserRepository implements IUserRepository {
   }
 
   private async disconnectDB(): Promise<void> {
-    this.prisma.$disconnect();
+    prisma.$disconnect();
   }
 }
