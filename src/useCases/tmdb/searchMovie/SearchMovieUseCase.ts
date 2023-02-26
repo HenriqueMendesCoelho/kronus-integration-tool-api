@@ -49,7 +49,7 @@ export class SearchMovieUseCase {
       );
       const director = movieCredits.crew.filter((c) => c.job === 'Director');
       const directorNames = director.map((d) => d.name).join(', ');
-      const genres = moviePortuguese.genres.map((g) => g.name).join(', ');
+      const genres = moviePortuguese.genres.map((g) => g.name);
 
       const trailerPortuguese = moviePortuguese.videos.results.find(
         (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
