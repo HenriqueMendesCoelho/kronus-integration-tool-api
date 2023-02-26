@@ -49,6 +49,7 @@ export class SearchMovieUseCase {
       );
       const director = movieCredits.crew.filter((c) => c.job === 'Director');
       const directorNames = director.map((d) => d.name).join(', ');
+      const genres = moviePortuguese.genres.map((g) => g.name).join(', ');
 
       const trailerPortuguese = moviePortuguese.videos.results.find(
         (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
@@ -70,6 +71,7 @@ export class SearchMovieUseCase {
         portuguese_url_trailer: trailerPortuguese?.key || '',
         english_url_trailer: trailerEnglish?.key || '',
         description: moviePortuguese?.overview,
+        genres,
         release_date: moviePortuguese?.release_date,
       };
     } catch (error) {
