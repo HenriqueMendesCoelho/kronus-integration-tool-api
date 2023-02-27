@@ -11,29 +11,25 @@ export class SendMailTemplateUseCase {
     subject: string,
     username: string
   ): Promise<void> {
-    try {
-      await this.sendGridRepository.sendMailTemplate({
-        from: {
-          email: from,
-        },
-        personalizations: [
-          {
-            to: [
-              {
-                email: to,
-              },
-            ],
-            dynamic_template_data: {
-              subject: subject,
-              user: username,
+    await this.sendGridRepository.sendMailTemplate({
+      from: {
+        email: from,
+      },
+      personalizations: [
+        {
+          to: [
+            {
+              email: to,
             },
+          ],
+          dynamic_template_data: {
+            subject: subject,
+            user: username,
           },
-        ],
-        template_id: templateId,
-      });
-      return;
-    } catch (error) {
-      throw new SendEmailError();
-    }
+        },
+      ],
+      template_id: templateId,
+    });
+    return;
   }
 }
