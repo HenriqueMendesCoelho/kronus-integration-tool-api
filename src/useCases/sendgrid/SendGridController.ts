@@ -6,13 +6,13 @@ export class SendGridController {
   constructor(private sendMailTemplateUseCase: SendMailTemplateUseCase) {}
 
   async sendMailTemplate(request: Request, response: Response) {
-    const { from, to, templateId, subject, username } = request.body;
+    const { from, to, template_id, subject, username } = request.body;
 
     try {
       await this.sendMailTemplateUseCase.send(
         from,
         to,
-        templateId,
+        template_id,
         subject,
         username
       );
