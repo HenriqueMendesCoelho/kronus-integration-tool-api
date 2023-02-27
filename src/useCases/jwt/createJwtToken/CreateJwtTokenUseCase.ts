@@ -10,7 +10,9 @@ export class CreateJwtTokenUseCase {
 
   async create(username: string, password: string): Promise<object> {
     const user = await this.userRepository.findByUsername(username);
-    const exp = Math.floor(Date.now() / 1000) + 60 * 60;
+    const exp = new Date();
+    exp.setHours(exp.getHours() + 1);
+    const expires = this.toISOStringWithTimezone(exp);
 
     if (!user) {
       throw new InvalidCredencialsError();
@@ -26,9 +28,9 @@ export class CreateJwtTokenUseCase {
       throw new InvalidCredencialsError();
     }
 
-    const tk = jwt.sign(
+    const token = jwt.sign(
       {
-        exp,
+        exp: exp.getTime(),
         issuer: 'Kronus Integration tool app',
         audience: 'Kronus Integration tool user',
         username,
@@ -37,8 +39,31 @@ export class CreateJwtTokenUseCase {
     );
 
     return {
-      access_token: tk,
-      exp,
+      access_token: token,
+      expires,
     };
   }
+
+  private toISOStringWithTimezone = (date: Date) => {
+    const tzOffset = -date.getTimezoneOffset();
+    const diff = tzOffset >= 0 ? '+' : '-';
+    const pad = (n) => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
+    return (
+      date.getFullYear() +
+      '-' +
+      pad(date.getMonth() + 1) +
+      '-' +
+      pad(date.getDate()) +
+      'T' +
+      pad(date.getHours()) +
+      ':' +
+      pad(date.getMinutes()) +
+      ':' +
+      pad(date.getSeconds()) +
+      diff +
+      pad(tzOffset / 60) +
+      ':' +
+      pad(tzOffset % 60)
+    );
+  };
 }
