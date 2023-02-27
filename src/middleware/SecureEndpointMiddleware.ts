@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { CustomError } from '../err/CustomError';
 import { ApiKeyRepository } from '../repositories/implementations/ApiKeyRepository';
 import { verifyJwtTokenUseCase } from '../useCases/jwt';
 
