@@ -4,7 +4,7 @@ function logger(request: Request, response: Response, next: NextFunction) {
   const from = request.headers['x-forwarded-for'];
   response.on('finish', () => {
     console.log(
-      `[${response.statusCode}][${request.method}]/${request.path}[from:${from}]`
+      `[${response.statusCode}][${request.method}]${request.path}[from:${from}]`
     );
   });
   next();
