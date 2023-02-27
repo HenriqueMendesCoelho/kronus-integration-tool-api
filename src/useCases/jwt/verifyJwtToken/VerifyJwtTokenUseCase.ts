@@ -8,8 +8,13 @@ export class VerifyJwtTokenUseCase {
     token = token.slice(7);
 
     try {
-      const isValid = jwt.verify(token, this.secret);
-      return !!isValid;
+      const isValid = jwt.verify(token, this.secret) as PayloadToken;
+
+      if (!isValid) {
+        return false;
+      }
+
+      return Date.now() < isValid.exp;
     } catch {
       return false;
     }
