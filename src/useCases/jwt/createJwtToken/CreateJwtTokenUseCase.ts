@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { IUserRepository } from '../../../repositories/IUserRepository';
+import { toISOStringWithTimezone } from '../../../utils/DateUtils';
 import PasswordUtils from '../../user/utils/PasswordUtils';
 import { InvalidCredencialsError } from '../errors/InvalidCredencialsError';
 
@@ -12,7 +13,7 @@ export class CreateJwtTokenUseCase {
     const user = await this.userRepository.findByUsername(username);
     const exp = new Date();
     exp.setHours(exp.getHours() + 1);
-    const expires = this.toISOStringWithTimezone(exp);
+    const expires = toISOStringWithTimezone(exp);
 
     if (!user) {
       throw new InvalidCredencialsError();
@@ -43,27 +44,4 @@ export class CreateJwtTokenUseCase {
       expires,
     };
   }
-
-  private toISOStringWithTimezone = (date: Date) => {
-    const tzOffset = -date.getTimezoneOffset();
-    const diff = tzOffset >= 0 ? '+' : '-';
-    const pad = (n) => `${Math.floor(Math.abs(n))}`.padStart(2, '0');
-    return (
-      date.getFullYear() +
-      '-' +
-      pad(date.getMonth() + 1) +
-      '-' +
-      pad(date.getDate()) +
-      'T' +
-      pad(date.getHours()) +
-      ':' +
-      pad(date.getMinutes()) +
-      ':' +
-      pad(date.getSeconds()) +
-      diff +
-      pad(tzOffset / 60) +
-      ':' +
-      pad(tzOffset % 60)
-    );
-  };
 }
