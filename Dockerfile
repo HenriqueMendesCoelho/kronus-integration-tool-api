@@ -2,6 +2,8 @@ FROM node:18.14.1-alpine
 
 WORKDIR /usr/src/app
 
+ENV TZ="America/Sao_Paulo"
+
 COPY src ./src
 COPY prisma ./prisma
 COPY package.json ./
