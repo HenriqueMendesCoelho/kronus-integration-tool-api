@@ -1,5 +1,6 @@
 import { ITmdbRepository } from '../../../repositories/ITmdbRepository';
 import { CreateSummaryError } from '../errors/CreateSummaryError';
+import { TmdbIntegrationError } from '../errors/TmdbIntegrationError';
 
 export class SearchMovieUseCase {
   constructor(private tmdbRepository: ITmdbRepository) {}
@@ -37,16 +38,17 @@ export class SearchMovieUseCase {
   }
 
   async summary(id: number) {
-    try {
-      const moviePortuguese = await this.tmdbRepository.findMovieById(id, {});
-      const movieEnglish = await this.tmdbRepository.findMovieById(id, {
-        language: 'en-Us',
-      });
+    const moviePortuguese = await this.tmdbRepository.findMovieById(id, {});
+    const movieEnglish = await this.tmdbRepository.findMovieById(id, {
+      language: 'en-Us',
+    });
+    const movieCredits = await this.tmdbRepository.findMovieCreditsById(id, {});
 
-      const movieCredits = await this.tmdbRepository.findMovieCreditsById(
-        id,
-        {}
-      );
+    if (!moviePortuguese || !movieEnglish || !movieCredits) {
+      return {};
+    }
+
+    try {
       const director = movieCredits.crew.filter((c) => c.job === 'Director');
       const directorNames = director.map((d) => d.name).join(', ');
       const genres = moviePortuguese.genres.map((g) => g.name);

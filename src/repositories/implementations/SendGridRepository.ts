@@ -15,7 +15,7 @@ export class SendGridRepository implements ISendGridRepository {
       });
       return response;
     } catch (error) {
-      throw new SendEmailError(error.response.data);
+      throw new SendEmailError(error.response.data, error.response.status);
     }
   }
 }

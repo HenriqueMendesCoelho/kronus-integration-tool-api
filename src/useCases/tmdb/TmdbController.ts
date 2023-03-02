@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { CustomError } from '../../err/CustomError';
+import { TmdbIntegrationError } from './errors/TmdbIntegrationError';
 import { SearchMovieUseCase } from './searchMovie/SearchMovieUseCase';
 
 export class TmdbController {
@@ -28,6 +29,11 @@ export class TmdbController {
 
       return response.status(200).json(movies).send();
     } catch (error) {
+      if (error instanceof CustomError) {
+        return response
+          .status(error.statusCode)
+          .send(...error.serializeErrors());
+      }
       return response.status(500).send(error);
     }
   }
@@ -55,6 +61,11 @@ export class TmdbController {
 
       return response.status(200).json(movie).send();
     } catch (error) {
+      if (error instanceof CustomError) {
+        return response
+          .status(error.statusCode)
+          .send(...error.serializeErrors());
+      }
       return response.status(500).send(error);
     }
   }
@@ -83,6 +94,11 @@ export class TmdbController {
 
       return response.status(200).json(credits).send();
     } catch (error) {
+      if (error instanceof CustomError) {
+        return response
+          .status(error.statusCode)
+          .send(...error.serializeErrors());
+      }
       return response.status(500).send(error);
     }
   }
@@ -98,6 +114,11 @@ export class TmdbController {
 
       return response.status(200).json(movieResume).send();
     } catch (error) {
+      if (error instanceof TmdbIntegrationError) {
+        return response
+          .status(error.statusCode)
+          .send(...error.serializeErrors());
+      }
       if (error instanceof CustomError) {
         return response
           .status(error.statusCode)
