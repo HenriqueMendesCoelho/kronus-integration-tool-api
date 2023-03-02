@@ -4,6 +4,7 @@ import {
   MovieCreditsFoundById,
   MovieFoundById,
   MovieFoundByName,
+  MovieGenres,
 } from '../../useCases/tmdb/types/TypeMovies';
 import { ITmdbRepository } from '../ITmdbRepository';
 
@@ -56,6 +57,17 @@ export class TmdbRepository implements ITmdbRepository {
         `${this.tmdbUrl}/movie/${id}/credits?api_key=${this.tmdbKey}&${paramsString}`
       );
       return movieCredits.data;
+    } catch (error) {
+      this.errorDefaultThrow(error);
+    }
+  }
+
+  async listGenres(language = 'pt-Br'): Promise<MovieGenres> {
+    try {
+      const genres = await axios.get(
+        `${this.tmdbUrl}/genre/movie/list?api_key=${this.tmdbKey}&language=${language}`
+      );
+      return genres.data;
     } catch (error) {
       this.errorDefaultThrow(error);
     }

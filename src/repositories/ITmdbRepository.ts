@@ -2,6 +2,7 @@ import {
   MovieCreditsFoundById,
   MovieFoundById,
   MovieFoundByName,
+  MovieGenres,
 } from '../useCases/tmdb/types/TypeMovies';
 
 export interface ITmdbRepository {
@@ -23,4 +24,5 @@ export interface ITmdbRepository {
       language?: string;
     }
   ): Promise<MovieCreditsFoundById>;
+  listGenres(language: string): Promise<MovieGenres>;
 }

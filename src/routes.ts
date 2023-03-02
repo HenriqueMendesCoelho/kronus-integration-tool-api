@@ -62,4 +62,12 @@ router.get(
   }
 );
 
+router.get(
+  `${basePathV1}/genre/movie/list`,
+  secureApiKey,
+  (request, response) => {
+    return tmdbController.listGenres(request, response);
+  }
+);
+
 export { router };

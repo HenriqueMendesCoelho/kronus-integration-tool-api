@@ -1,10 +1,14 @@
 import { Request, Response } from 'express';
 import { CustomError } from '../../err/CustomError';
 import { TmdbIntegrationError } from './errors/TmdbIntegrationError';
+import { SearchGenreUseCase } from './searchGenre/SearchGenreUseCase';
 import { SearchMovieUseCase } from './searchMovie/SearchMovieUseCase';
 
 export class TmdbController {
-  constructor(private searchMovieUseCase: SearchMovieUseCase) {}
+  constructor(
+    private searchMovieUseCase: SearchMovieUseCase,
+    private searchGenreUseCase: SearchGenreUseCase
+  ) {}
 
   async seachMoviesByName(request: Request, response: Response) {
     if (!request.query.query) {
@@ -114,11 +118,21 @@ export class TmdbController {
 
       return response.status(200).json(movieResume).send();
     } catch (error) {
-      if (error instanceof TmdbIntegrationError) {
+      if (error instanceof CustomError) {
         return response
           .status(error.statusCode)
           .send(...error.serializeErrors());
       }
+      return response.status(500).send(error);
+    }
+  }
+
+  async listGenres(request: Request, response: Response) {
+    const language = request.query.language;
+    try {
+      const genres = await this.searchGenreUseCase.list(language?.toString());
+      return response.status(200).json(genres).send();
+    } catch (error) {
       if (error instanceof CustomError) {
         return response
           .status(error.statusCode)

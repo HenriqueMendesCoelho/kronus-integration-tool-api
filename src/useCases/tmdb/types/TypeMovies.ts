@@ -105,3 +105,10 @@ export type MovieCreditsFoundById = {
     job: string;
   }>;
 };
+
+export type MovieGenres = {
+  genres: Array<{
+    id: number;
+    name: string;
+  }>;
+};
