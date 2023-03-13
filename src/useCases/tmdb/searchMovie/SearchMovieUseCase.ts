@@ -38,7 +38,9 @@ export class SearchMovieUseCase {
   }
 
   async summary(id: number) {
-    const moviePortuguese = await this.tmdbRepository.findMovieById(id, {});
+    const moviePortuguese = await this.tmdbRepository.findMovieById(id, {
+      language: 'pt-Br',
+    });
     const movieEnglish = await this.tmdbRepository.findMovieById(id, {
       language: 'en-Us',
     });
