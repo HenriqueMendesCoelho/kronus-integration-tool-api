@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { toISOStringWithTimezone } from '../utils/DateUtils';
 
 function logger(request: Request, response: Response, next: NextFunction) {
-  const from = request.headers['x-forwarded-for'];
+  const from =
+    request.headers['x-forwarded-for'] || request.socket.remoteAddress;
   response.on('finish', () => {
     console.log(
       `${toISOStringWithTimezone(new Date())}[${response.statusCode}][${
