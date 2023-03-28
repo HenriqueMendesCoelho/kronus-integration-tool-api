@@ -1,5 +1,4 @@
 import { ISendGridRepository } from '../../../repositories/ISendGridRepository';
-import { SendEmailError } from '../errors/SendEmailError';
 
 export class SendMailTemplateUseCase {
   constructor(private sendGridRepository: ISendGridRepository) {}
@@ -9,7 +8,7 @@ export class SendMailTemplateUseCase {
     to: string,
     templateId: string,
     subject: string,
-    username: string
+    params?: object
   ): Promise<void> {
     await this.sendGridRepository.sendMailTemplate({
       from: {
@@ -24,7 +23,7 @@ export class SendMailTemplateUseCase {
           ],
           dynamic_template_data: {
             subject: subject,
-            user: username,
+            ...params,
           },
         },
       ],
