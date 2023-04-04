@@ -1,6 +1,5 @@
 import { ITmdbRepository } from '../../../repositories/ITmdbRepository';
 import { CreateSummaryError } from '../errors/CreateSummaryError';
-import { TmdbIntegrationError } from '../errors/TmdbIntegrationError';
 
 export class SearchMovieUseCase {
   constructor(private tmdbRepository: ITmdbRepository) {}
@@ -77,6 +76,7 @@ export class SearchMovieUseCase {
         description: moviePortuguese?.overview,
         genres,
         release_date: moviePortuguese?.release_date,
+        runtime: moviePortuguese?.runtime,
       };
     } catch (error) {
       throw new CreateSummaryError(error);
