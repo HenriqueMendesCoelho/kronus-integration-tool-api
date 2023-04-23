@@ -1,49 +1,40 @@
 import { ITmdbRepository } from '../../../repositories/ITmdbRepository';
 import { CreateSummaryError } from '../errors/CreateSummaryError';
+import { MovieCreditsFoundById, MovieFoundById } from '../types/TypeMovies';
 
 export class SearchMovieUseCase {
   constructor(private tmdbRepository: ITmdbRepository) {}
 
-  async findMovieById(id: number, language: string) {
-    const movie = await this.tmdbRepository.findMovieById(id, {
-      language: language || 'pt-Br',
-    });
-
-    return movie;
-  }
-
-  async seachMoviesByName(params: {
-    query: string;
-    language?: string;
-    page?: number;
-    include_adult?: string;
-  }) {
-    const movies = await this.tmdbRepository.findMoviesByName({
-      query: params.query,
-      language: params.language || 'pt-Br',
-      page: params.page || 1,
-      include_adult: params.include_adult || 'false',
-    });
-
-    return movies;
-  }
-
-  async findMovieCreditsById(id: number, language: string) {
-    const credits = await this.tmdbRepository.findMovieCreditsById(id, {
-      language: language || 'pt-Br',
-    });
-
-    return credits;
-  }
-
   async summary(id: number) {
-    const moviePortuguese = await this.tmdbRepository.findMovieById(id, {
-      language: 'pt-Br',
-    });
-    const movieEnglish = await this.tmdbRepository.findMovieById(id, {
-      language: 'en-Us',
-    });
-    const movieCredits = await this.tmdbRepository.findMovieCreditsById(id, {});
+    const pathFindMovieById = `/movie/${id}`;
+
+    const moviePortuguese = (await this.tmdbRepository.callTmdb(
+      pathFindMovieById,
+      'get',
+      undefined,
+      {
+        language: 'pt-Br',
+        append_to_response: 'videos',
+      }
+    )) as MovieFoundById;
+    const movieEnglish = (await this.tmdbRepository.callTmdb(
+      pathFindMovieById,
+      'get',
+      undefined,
+      {
+        language: 'en-Us',
+        append_to_response: 'videos',
+      }
+    )) as MovieFoundById;
+    const movieCredits = (await this.tmdbRepository.callTmdb(
+      `/movie/${id}/credits`,
+      'get',
+      undefined,
+      {
+        language: 'en-Us',
+        append_to_response: 'videos',
+      }
+    )) as MovieCreditsFoundById;
 
     if (!moviePortuguese || !movieEnglish || !movieCredits) {
       return {};
@@ -77,6 +68,16 @@ export class SearchMovieUseCase {
         genres,
         release_date: moviePortuguese?.release_date,
         runtime: moviePortuguese?.runtime,
+        cast: movieCredits.cast.map((c) => {
+          return {
+            name: c.name,
+            original_name: c.original_name,
+            department: c.known_for_department,
+            character: c.character,
+            gender: c.gender,
+            profile_path: c.profile_path,
+          };
+        }),
       };
     } catch (error) {
       throw new CreateSummaryError(error);

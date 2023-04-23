@@ -1,76 +1,41 @@
 import axios from 'axios';
 import { TmdbIntegrationError } from '../../useCases/tmdb/errors/TmdbIntegrationError';
-import {
-  MovieCreditsFoundById,
-  MovieFoundById,
-  MovieFoundByName,
-  MovieGenres,
-} from '../../useCases/tmdb/types/TypeMovies';
 import { ITmdbRepository } from '../ITmdbRepository';
 
 export class TmdbRepository implements ITmdbRepository {
   private tmdbUrl = process.env.TMDB_ORIGIN_V3;
   private tmdbKey = process.env.TMDB_API_KEY_V3;
 
-  async findMoviesByName(params: {
-    query: string;
-    language: 'pt-Br';
-    page: 1;
-    include_adult: 'false';
-  }): Promise<MovieFoundByName> {
-    const paramsString = this.getStringParams(params);
+  async callTmdb(
+    url: string,
+    method: string,
+    body?: object,
+    params?: object
+  ): Promise<any> {
     try {
-      const movies = await axios.get(
-        `${this.tmdbUrl}/search/movie?api_key=${this.tmdbKey}&${paramsString}`
-      );
-      return movies.data;
+      const response = await axios({
+        url,
+        method,
+        baseURL: this.tmdbUrl,
+        data: this.bodyIsEmpty(body) ? undefined : body,
+        params: {
+          api_key: this.tmdbKey,
+          ...params,
+        },
+      });
+      return response.data;
     } catch (error) {
-      this.errorDefaultThrow(error);
-    }
-  }
-  async findMovieById(
-    id: number,
-    params: {
-      language: 'pt-Br';
-    }
-  ): Promise<MovieFoundById> {
-    const paramsString = this.getStringParams(params);
-    try {
-      const movie = await axios.get(
-        `${this.tmdbUrl}/movie/${id}?api_key=${this.tmdbKey}&${paramsString}&append_to_response=videos`
-      );
-      return movie.data;
-    } catch (error) {
+      console.log(error);
       this.errorDefaultThrow(error);
     }
   }
 
-  async findMovieCreditsById(
-    id: number,
-    params: {
-      language: 'pt-Br';
+  private bodyIsEmpty(body: object) {
+    if (!body) {
+      return true;
     }
-  ): Promise<MovieCreditsFoundById> {
-    const paramsString = this.getStringParams(params);
-    try {
-      const movieCredits = await axios.get(
-        `${this.tmdbUrl}/movie/${id}/credits?api_key=${this.tmdbKey}&${paramsString}`
-      );
-      return movieCredits.data;
-    } catch (error) {
-      this.errorDefaultThrow(error);
-    }
-  }
 
-  async listGenres(language = 'pt-Br'): Promise<MovieGenres> {
-    try {
-      const genres = await axios.get(
-        `${this.tmdbUrl}/genre/movie/list?api_key=${this.tmdbKey}&language=${language}`
-      );
-      return genres.data;
-    } catch (error) {
-      this.errorDefaultThrow(error);
-    }
+    return Object.keys(body).length === 0 && body.constructor === Object;
   }
 
   private getStringParams(params: any) {

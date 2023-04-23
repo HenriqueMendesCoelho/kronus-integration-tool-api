@@ -38,24 +38,8 @@ router.post(
   }
 );
 
-router.get(`${basePathV1}/movie`, secureApiKey, (request, response) => {
-  return tmdbController.seachMoviesByName(request, response);
-});
-
-router.get(`${basePathV1}/movie/:id`, secureApiKey, (request, response) => {
-  return tmdbController.findMovieById(request, response);
-});
-
 router.get(
-  `${basePathV1}/movie/:id/credits`,
-  secureApiKey,
-  (request, response) => {
-    return tmdbController.findMovieCreditsById(request, response);
-  }
-);
-
-router.get(
-  `${basePathV1}/movie/:id/summary`,
+  `${basePathV1}/tmdb/movie/:id/summary`,
   secureApiKey,
   (request, response) => {
     return tmdbController.movieSummary(request, response);
@@ -63,10 +47,10 @@ router.get(
 );
 
 router.get(
-  `${basePathV1}/genre/movie/list`,
+  new RegExp(`^${basePathV1}/tmdb/.+$`),
   secureApiKey,
   (request, response) => {
-    return tmdbController.listGenres(request, response);
+    return tmdbController.callTmdb(request, response);
   }
 );
 

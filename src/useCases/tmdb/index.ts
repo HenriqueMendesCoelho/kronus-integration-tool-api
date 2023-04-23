@@ -1,16 +1,16 @@
 import { TmdbRepository } from '../../repositories/implementations/TmdbRepository';
-import { SearchGenreUseCase } from './searchGenre/SearchGenreUseCase';
 import { SearchMovieUseCase } from './searchMovie/SearchMovieUseCase';
 import { TmdbController } from './TmdbController';
+import { TmdbDirectCallUseCase } from './tmdbDirectCall/tmdbDirectCallUseCase';
 
 const tmdbRepository = new TmdbRepository();
 
-const searchMoiveUseCase = new SearchMovieUseCase(tmdbRepository);
-const searchGenresUseCase = new SearchGenreUseCase(tmdbRepository);
+const searchMovieUseCase = new SearchMovieUseCase(tmdbRepository);
+const tmdbDirectCallUseCase = new TmdbDirectCallUseCase(tmdbRepository);
 
 const tmdbController = new TmdbController(
-  searchMoiveUseCase,
-  searchGenresUseCase
+  searchMovieUseCase,
+  tmdbDirectCallUseCase
 );
 
-export { searchMoiveUseCase, searchGenresUseCase, tmdbController };
+export { searchMovieUseCase, tmdbController, tmdbDirectCallUseCase };
