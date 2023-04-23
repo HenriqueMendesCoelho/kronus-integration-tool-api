@@ -68,16 +68,6 @@ export class SearchMovieUseCase {
         genres,
         release_date: moviePortuguese?.release_date,
         runtime: moviePortuguese?.runtime,
-        cast: movieCredits.cast.map((c) => {
-          return {
-            name: c.name,
-            original_name: c.original_name,
-            department: c.known_for_department,
-            character: c.character,
-            gender: c.gender,
-            profile_path: c.profile_path,
-          };
-        }),
       };
     } catch (error) {
       throw new CreateSummaryError(error);
