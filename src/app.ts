@@ -8,7 +8,10 @@ const app = express();
 app.use(express.json());
 app.use(logger);
 
-const allowedOrigins = 'http://localhost:4200/';
+const allowedOrigins = [
+  'http://localhost:4200',
+  'https://kit.app.kronusboss.com',
+];
 const corsOpts: cors.CorsOptions = {
   origin: allowedOrigins,
   optionsSuccessStatus: 200,
