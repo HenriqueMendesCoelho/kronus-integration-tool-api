@@ -22,7 +22,7 @@ router.post(`${basePathV1}/key`, secure, (request, response) => {
   return apiKeyController.createKey(request, response);
 });
 
-router.delete(`${basePathV1}/key`, secure, (request, response) => {
+router.delete(`${basePathV1}/key/:name/delete`, secure, (request, response) => {
   return apiKeyController.delete(request, response);
 });
 

@@ -44,11 +44,11 @@ export class ApiKeyRepository implements IApiKeyRepository {
     }
   }
 
-  async delete(key: string): Promise<void> {
+  async delete(name: string): Promise<void> {
     try {
       await prisma.apiKey.delete({
         where: {
-          key: key,
+          name: name,
         },
       });
       return;

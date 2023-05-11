@@ -4,5 +4,5 @@ export interface IApiKeyRepository {
   findByKey(key: string): Promise<ApiKey>;
   findAll(): Promise<Array<ApiKey>>;
   save(apikey: ApiKey): Promise<ApiKey>;
-  delete(key: string): Promise<void>;
+  delete(name: string): Promise<void>;
 }

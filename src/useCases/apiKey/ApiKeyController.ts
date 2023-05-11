@@ -50,8 +50,8 @@ export class ApiKeyController {
 
   async delete(request: Request, response: Response): Promise<Response> {
     try {
-      const { key } = request.body;
-      await this.deleteApiKey.execute(key);
+      const { name } = request.params;
+      await this.deleteApiKey.execute(name);
 
       return response.status(200).send();
     } catch (error) {
