@@ -7,13 +7,14 @@ const app = express();
 
 app.use(express.json());
 app.use(logger);
-app.use(router);
 
-const allowedOrigins = ['*'];
+const allowedOrigins = 'http://localhost:4200/';
 const corsOpts: cors.CorsOptions = {
   origin: allowedOrigins,
+  optionsSuccessStatus: 200,
 };
-
 app.use(cors(corsOpts));
+
+app.use(router);
 
 export { app };
