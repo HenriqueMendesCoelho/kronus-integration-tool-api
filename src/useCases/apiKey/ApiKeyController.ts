@@ -32,7 +32,7 @@ export class ApiKeyController {
       const apiKey = await this.searchApiKey.findAll();
 
       if (apiKey) {
-        return response.status(200).json(apiKey).send();
+        return response.status(200).json(apiKey);
       }
 
       return response.status(204).send();
