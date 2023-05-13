@@ -1,67 +1,59 @@
 import axios from 'axios';
-import {
-  MovieCreditsFoundById,
-  MovieFoundById,
-  MovieFoundByName,
-} from '../../useCases/tmdb/types/TypeMovies';
+import { TmdbIntegrationError } from '../../useCases/tmdb/errors/TmdbIntegrationError';
 import { ITmdbRepository } from '../ITmdbRepository';
 
 export class TmdbRepository implements ITmdbRepository {
   private tmdbUrl = process.env.TMDB_ORIGIN_V3;
   private tmdbKey = process.env.TMDB_API_KEY_V3;
 
-  async findMoviesByName(params: {
-    query: string;
-    language?: string;
-    page?: number;
-    include_adult?: string;
-  }): Promise<MovieFoundByName> {
-    const paramsString = this.getStringParams({
-      query: params.query,
-      language: params.language || 'pt-Br',
-      page: params.page || 1,
-      include_adult: params.include_adult || 'false',
-    });
-
+  async callTmdb(
+    url: string,
+    method: string,
+    body?: object,
+    params?: object
+  ): Promise<any> {
     try {
-      const movies = await axios.get(
-        `${this.tmdbUrl}/search/movie?api_key=${this.tmdbKey}&${paramsString}`
-      );
-      return movies.data;
+      const response = await axios({
+        url,
+        method,
+        baseURL: this.tmdbUrl,
+        data: this.bodyIsEmpty(body) ? undefined : body,
+        params: {
+          api_key: this.tmdbKey,
+          ...params,
+        },
+      });
+      return response.data;
     } catch (error) {
-      throw new Error(error);
+      console.log(error);
+      this.errorDefaultThrow(error);
     }
   }
-  async findMovieById(
-    id: number,
-    params: {
-      language?: string;
-    }
-  ): Promise<MovieFoundById> {
-    params.language = params.language || 'pt-Br';
-    const paramsString = this.getStringParams(params);
 
-    const movie = await axios.get(
-      `${this.tmdbUrl}/movie/${id}?api_key=${this.tmdbKey}&${paramsString}&append_to_response=videos`
-    );
-    return movie.data;
-  }
-  async findMovieCreditsById(
-    id: number,
-    params: {
-      language?: string;
+  private bodyIsEmpty(body: object) {
+    if (!body) {
+      return true;
     }
-  ): Promise<MovieCreditsFoundById> {
-    params.language = params.language || 'pt-Br';
-    const paramsString = this.getStringParams(params);
 
-    const movieCredits = await axios.get(
-      `${this.tmdbUrl}/movie/${id}/credits?api_key=${this.tmdbKey}&${paramsString}`
-    );
-    return movieCredits.data;
+    return Object.keys(body).length === 0 && body.constructor === Object;
   }
 
   private getStringParams(params: any) {
     return new URLSearchParams(params).toString();
+  }
+
+  private errorDefaultThrow(error: any) {
+    const response = error.response;
+    const isObject = typeof response == 'object';
+    if (isObject) {
+      throw new TmdbIntegrationError(
+        undefined,
+        response.status,
+        isObject ? response.data : {}
+      );
+    }
+    throw new TmdbIntegrationError(undefined, error.response.status, {
+      message: 'Error during tmdb integration',
+    });
   }
 }

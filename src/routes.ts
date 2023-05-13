@@ -22,7 +22,7 @@ router.post(`${basePathV1}/key`, secure, (request, response) => {
   return apiKeyController.createKey(request, response);
 });
 
-router.delete(`${basePathV1}/key`, secure, (request, response) => {
+router.delete(`${basePathV1}/key/:name/delete`, secure, (request, response) => {
   return apiKeyController.delete(request, response);
 });
 
@@ -38,27 +38,19 @@ router.post(
   }
 );
 
-router.get(`${basePathV1}/movie`, secureApiKey, (request, response) => {
-  return tmdbController.seachMoviesByName(request, response);
-});
-
-router.get(`${basePathV1}/movie/:id`, secureApiKey, (request, response) => {
-  return tmdbController.findMovieById(request, response);
-});
-
 router.get(
-  `${basePathV1}/movie/:id/credits`,
+  `${basePathV1}/tmdb/movie/:id/summary`,
   secureApiKey,
   (request, response) => {
-    return tmdbController.findMovieCreditsById(request, response);
+    return tmdbController.movieSummary(request, response);
   }
 );
 
 router.get(
-  `${basePathV1}/movie/:id/summary`,
+  new RegExp(`^${basePathV1}/tmdb/.+$`),
   secureApiKey,
   (request, response) => {
-    return tmdbController.movieResume(request, response);
+    return tmdbController.callTmdb(request, response);
   }
 );
 

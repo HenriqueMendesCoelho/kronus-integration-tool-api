@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { IUserRepository } from '../../../repositories/IUserRepository';
+import { toISOStringWithTimezone } from '../../../utils/DateUtils';
 import PasswordUtils from '../../user/utils/PasswordUtils';
 import { InvalidCredencialsError } from '../errors/InvalidCredencialsError';
 
@@ -10,7 +11,9 @@ export class CreateJwtTokenUseCase {
 
   async create(username: string, password: string): Promise<object> {
     const user = await this.userRepository.findByUsername(username);
-    const exp = Math.floor(Date.now() / 1000) + 60 * 60;
+    const exp = new Date();
+    exp.setHours(exp.getHours() + 1);
+    const expires = toISOStringWithTimezone(exp);
 
     if (!user) {
       throw new InvalidCredencialsError();
@@ -26,9 +29,9 @@ export class CreateJwtTokenUseCase {
       throw new InvalidCredencialsError();
     }
 
-    const tk = jwt.sign(
+    const token = jwt.sign(
       {
-        exp,
+        exp: exp.getTime(),
         issuer: 'Kronus Integration tool app',
         audience: 'Kronus Integration tool user',
         username,
@@ -37,8 +40,8 @@ export class CreateJwtTokenUseCase {
     );
 
     return {
-      access_token: tk,
-      exp,
+      access_token: token,
+      expires,
     };
   }
 }

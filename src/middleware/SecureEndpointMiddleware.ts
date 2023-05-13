@@ -1,13 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { CustomError } from '../err/CustomError';
 import { ApiKeyRepository } from '../repositories/implementations/ApiKeyRepository';
 import { verifyJwtTokenUseCase } from '../useCases/jwt';
 
-async function secure(
-  request: Request,
-  response: Response,
-  next: NextFunction
-) {
+function secure(request: Request, response: Response, next: NextFunction) {
   const jwt = request.headers['authorization'];
 
   if (!jwt) {
@@ -32,14 +27,22 @@ async function secureApiKey(
 ) {
   const apiKeyRepository = new ApiKeyRepository();
 
-  const apikey = request.headers['authorization'];
+  const headerAuthorization = request.headers['authorization'];
 
-  if (!apikey || apikey.slice(0, 10) !== 'Bearer Kb.') {
+  if (!headerAuthorization) {
     response.status(403).end();
     return;
   }
 
-  const apikeyExists = apiKeyRepository.findByKey(apikey);
+  const apikey = headerAuthorization.slice(7);
+  const startsWithKb = apikey.slice(0, 3) === 'Kb.';
+
+  if (!startsWithKb) {
+    response.status(403).end();
+    return;
+  }
+
+  const apikeyExists = await apiKeyRepository.findByKey(apikey);
 
   if (!apikeyExists) {
     response.status(403).end();

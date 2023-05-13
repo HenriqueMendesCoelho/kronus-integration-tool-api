@@ -6,15 +6,25 @@ export class SendGridController {
   constructor(private sendMailTemplateUseCase: SendMailTemplateUseCase) {}
 
   async sendMailTemplate(request: Request, response: Response) {
-    const { from, to, templateId, subject, username } = request.body;
+    const { from, to, template_id, subject, params } = request.body;
+
+    if (!from || !to || !template_id || !subject) {
+      return response
+        .status(400)
+        .json({
+          message: 'from, to, template_id and subject are required',
+          error: 400,
+          timestamp: Date.now(),
+        });
+    }
 
     try {
       await this.sendMailTemplateUseCase.send(
         from,
         to,
-        templateId,
+        template_id,
         subject,
-        username
+        params
       );
 
       return response.status(202).send();
@@ -24,7 +34,7 @@ export class SendGridController {
           .status(error.statusCode)
           .send(...error.serializeErrors());
       }
-      response.status(500).send(error);
+      return response.status(500).send(error);
     }
   }
 }

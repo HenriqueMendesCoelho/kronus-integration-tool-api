@@ -1,17 +1,17 @@
 import { CustomError } from '../../../err/CustomError';
 
 export class SendEmailError extends CustomError {
-  statusCode = 500;
+  constructor(private msg: string, public statusCode = 500) {
+    super(msg);
 
-  constructor() {
-    super('Error to send e-mail');
     Object.setPrototypeOf(this, SendEmailError.prototype);
   }
+
   serializeErrors() {
     return [
       {
         sucess: false,
-        message: 'Error to send e-mail',
+        message: this.msg,
         timestamp: Date.now(),
       },
     ];

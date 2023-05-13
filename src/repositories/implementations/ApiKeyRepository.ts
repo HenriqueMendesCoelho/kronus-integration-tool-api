@@ -1,14 +1,11 @@
-import { PrismaClient } from '@prisma/client';
-
 import { ApiKey } from '../../models/ApiKey';
 import { IApiKeyRepository } from '../IApiKeyRepository';
+import { prisma } from '../prisma/PrismaClient';
 
 export class ApiKeyRepository implements IApiKeyRepository {
-  private prisma = new PrismaClient();
-
   async findByKey(key: string): Promise<ApiKey> | null {
     try {
-      const obj = await this.prisma.apiKey.findFirst({
+      const obj = await prisma.apiKey.findFirst({
         where: {
           key: key,
         },
@@ -24,7 +21,7 @@ export class ApiKeyRepository implements IApiKeyRepository {
 
   async findAll(): Promise<Array<ApiKey>> {
     try {
-      return this.prisma.apiKey.findMany();
+      return prisma.apiKey.findMany();
     } catch (error) {
       throw new Error(error || 'Error during apikey query');
     } finally {
@@ -34,7 +31,7 @@ export class ApiKeyRepository implements IApiKeyRepository {
 
   async save(apikey: ApiKey): Promise<ApiKey> {
     try {
-      return this.prisma.apiKey.create({
+      return prisma.apiKey.create({
         data: {
           key: apikey.key,
           name: apikey.name,
@@ -47,11 +44,11 @@ export class ApiKeyRepository implements IApiKeyRepository {
     }
   }
 
-  async delete(key: string): Promise<void> {
+  async delete(name: string): Promise<void> {
     try {
-      await this.prisma.apiKey.delete({
+      await prisma.apiKey.delete({
         where: {
-          key: key,
+          name: name,
         },
       });
       return;
@@ -63,6 +60,6 @@ export class ApiKeyRepository implements IApiKeyRepository {
   }
 
   private async disconnectDB(): Promise<void> {
-    this.prisma.$disconnect();
+    prisma.$disconnect();
   }
 }
