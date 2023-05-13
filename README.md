@@ -1,3 +1,13 @@
-# Integration-API - KronusBoss
+# Kronus integration tool - API
 
-This API is specifically designed for use within the Kronus environment and is intended for internal use only. It has been developed using Node 18 and TypeScript, ensuring high performance and reliability.
+## Introduction
+
+```
+Kronus Integration Tool is a private integration aggregation project designed to simplify and optimize data connectivity across multiple systems and platforms. It serves as a centralized hub for integrating various software applications and third-party services, enabling seamless communication. This readme provides an overview of the Kronus Integration Tool project.
+```
+
+### Tecnologies
+
+```
+NodeJS, Typescript, Prisma ORM, SQLite, Express
+```
