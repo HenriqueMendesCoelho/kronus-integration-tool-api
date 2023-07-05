@@ -45,13 +45,21 @@ export class SearchMovieUseCase {
       const directorNames = director.map((d) => d.name).join(', ');
       const genres = moviePortuguese.genres.map((g) => g.name);
 
-      const trailerPortuguese = moviePortuguese.videos.results.find(
-        (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
-      );
+      const trailerPortuguese =
+        moviePortuguese.videos.results.find(
+          (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
+        ) ||
+        moviePortuguese.videos.results.find(
+          (v) => v.site === 'YouTube' && v.type === 'Trailer'
+        );
 
-      const trailerEnglish = movieEnglish.videos.results.find(
-        (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
-      );
+      const trailerEnglish =
+        movieEnglish.videos.results.find(
+          (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
+        ) ||
+        movieEnglish.videos.results.find(
+          (v) => v.site === 'YouTube' && v.type === 'Trailer'
+        );
 
       return {
         tmdb_id: id,
