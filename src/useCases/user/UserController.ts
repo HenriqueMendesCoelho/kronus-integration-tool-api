@@ -11,18 +11,32 @@ export class UserController {
 
   async update(request: Request, response: Response): Promise<Response> {
     const { username, password } = request.body;
-    const jwt = request.headers['authorization'];
 
+    if (this.isPasswordWeak(password)) {
+      return response.status(400).json({
+        success: false,
+        status: 400,
+        message:
+          'Password is weak, needs minumum 20 characters, uppercase, lowercase, number and special character',
+        path: '/user',
+        timestamp: Date.now(),
+      });
+    }
+
+    const jwt = request.headers['authorization'];
     const usernameToUpdate = this.verifyJwtTokenUseCase.getUsername(jwt);
 
     try {
-      const user = await this.updateUserUseCase.execute(
+      await this.updateUserUseCase.execute(
         usernameToUpdate,
         username,
         password
       );
 
-      return response.status(200).json(user).send();
+      return response.status(200).json({
+        success: true,
+        message: 'User updated',
+      });
     } catch (error) {
       if (error instanceof CustomError) {
         return response
@@ -32,5 +46,12 @@ export class UserController {
 
       return response.status(500).send(error);
     }
+  }
+
+  private isPasswordWeak(password: string) {
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$!%*?&^])[A-Za-z\d@#$!%*?&^]{20,70}$/;
+
+    return !passwordRegex.test(password);
   }
 }
