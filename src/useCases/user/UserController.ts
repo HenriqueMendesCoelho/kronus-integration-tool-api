@@ -10,17 +10,13 @@ export class UserController {
   ) {}
 
   async update(request: Request, response: Response): Promise<Response> {
-    const { username, password } = request.body;
+    const { username, password, new_password } = request.body;
 
-    if (this.isPasswordWeak(password)) {
-      return response.status(400).json({
-        success: false,
-        status: 400,
-        message:
-          'Password is weak, needs minumum 20 characters, uppercase, lowercase, number and special character',
-        path: '/user',
-        timestamp: Date.now(),
-      });
+    if (this.isPasswordWeak(new_password)) {
+      return this.errorResponse(
+        'Password is weak, needs minumum 20 characters, uppercase, lowercase, number and special character',
+        response
+      );
     }
 
     const jwt = request.headers['authorization'];
@@ -30,7 +26,8 @@ export class UserController {
       await this.updateUserUseCase.execute(
         usernameToUpdate,
         username,
-        password
+        password,
+        new_password
       );
 
       return response.status(200).json({
@@ -53,5 +50,15 @@ export class UserController {
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$!%*?&^])[A-Za-z\d@#$!%*?&^]{20,70}$/;
 
     return !passwordRegex.test(password);
+  }
+
+  private errorResponse(msg: string, response: Response) {
+    return response.status(400).json({
+      success: false,
+      status: 400,
+      message: msg,
+      path: 'api/v1/user',
+      timestamp: Date.now(),
+    });
   }
 }
