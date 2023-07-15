@@ -26,8 +26,8 @@ router.delete(`${basePathV1}/key/:name/delete`, secure, (request, response) => {
   return apiKeyController.delete(request, response);
 });
 
-router.put(`${basePathV1}/user`, secure, (request, response) => {
-  return userController.update(request, response);
+router.patch(`${basePathV1}/user`, secure, (request, response) => {
+  return userController.updatePassword(request, response);
 });
 
 router.post(

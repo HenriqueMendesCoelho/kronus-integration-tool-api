@@ -14,7 +14,7 @@ export class UpdateUserUseCase {
     newPassword: string
   ): Promise<User> {
     const salt = PasswordUtils.generateSalt();
-    const passwordHash = PasswordUtils.hashPassword(newPassword, salt);
+    const newPasswordHash = PasswordUtils.hashPassword(newPassword, salt);
 
     const userExits = await this.userRepository.findByUsername(username);
 
@@ -22,13 +22,21 @@ export class UpdateUserUseCase {
       throw new UserNotFoundError(username);
     }
 
-    if (userExits.password !== password) {
+    const currentPasswordHash = PasswordUtils.hashPassword(
+      password,
+      userExits.salt
+    );
+    const passwordMatch = this.passwordMatch(
+      userExits.password,
+      currentPasswordHash
+    );
+    if (!passwordMatch) {
       throw new UserNotAuthorizeError();
     }
 
     userExits.username = usernameUpdated || username;
-    userExits.password = passwordHash || userExits.password;
-    userExits.salt = password ? salt : userExits.salt;
+    userExits.password = passwordMatch ? newPasswordHash : userExits.password;
+    userExits.salt = passwordMatch ? salt : userExits.salt;
 
     const updateUser = await this.userRepository.update(
       userExits.username,
@@ -36,5 +44,9 @@ export class UpdateUserUseCase {
     );
 
     return updateUser;
+  }
+
+  private passwordMatch(currentPass: string, currentPasswordInformed) {
+    return currentPass === currentPasswordInformed;
   }
 }

@@ -9,8 +9,11 @@ export class UserController {
     private verifyJwtTokenUseCase: VerifyJwtTokenUseCase
   ) {}
 
-  async update(request: Request, response: Response): Promise<Response> {
-    const { username, password, new_password } = request.body;
+  async updatePassword(
+    request: Request,
+    response: Response
+  ): Promise<Response> {
+    const { password, new_password } = request.body;
 
     if (this.isPasswordWeak(new_password)) {
       return this.errorResponse(
@@ -25,7 +28,7 @@ export class UserController {
     try {
       await this.updateUserUseCase.execute(
         usernameToUpdate,
-        username,
+        usernameToUpdate,
         password,
         new_password
       );
@@ -47,7 +50,7 @@ export class UserController {
 
   private isPasswordWeak(password: string) {
     const passwordRegex =
-      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$!%*?&^])[A-Za-z\d@#$!%*?&^]{20,70}$/;
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$!%*?&])[A-Za-z\d@#$!%*?&]{20,70}$/;
 
     return !passwordRegex.test(password);
   }

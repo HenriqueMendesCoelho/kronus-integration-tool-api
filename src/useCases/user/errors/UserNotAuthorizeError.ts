@@ -10,7 +10,7 @@ export class UserNotAuthorizeError extends CustomError {
     return [
       {
         sucess: false,
-        message: 'Not authorized',
+        message: 'Action Denied',
         timestamp: Date.now(),
       },
     ];
