@@ -10,26 +10,24 @@ import { tmdbController } from './useCases/tmdb';
 const router = Router();
 const basePathV1 = '/api/v1';
 
+//User
 router.post('/login', (request, response) => {
   return jwtController.create(request, response);
 });
-
 router.get(`${basePathV1}/key`, secure, (request, response) => {
   return apiKeyController.findAll(request, response);
 });
-
 router.post(`${basePathV1}/key`, secure, (request, response) => {
   return apiKeyController.createKey(request, response);
 });
-
 router.delete(`${basePathV1}/key/:name/delete`, secure, (request, response) => {
   return apiKeyController.delete(request, response);
 });
-
 router.patch(`${basePathV1}/user`, secure, (request, response) => {
   return userController.updatePassword(request, response);
 });
 
+//SendGrid
 router.post(
   `${basePathV1}/sendgrid/template`,
   secureApiKey,
@@ -38,6 +36,7 @@ router.post(
   }
 );
 
+//TMDB
 router.get(
   `${basePathV1}/tmdb/movie/:id/summary`,
   secureApiKey,
@@ -45,7 +44,6 @@ router.get(
     return tmdbController.movieSummary(request, response);
   }
 );
-
 router.get(
   new RegExp(`^${basePathV1}/tmdb/.+$`),
   secureApiKey,

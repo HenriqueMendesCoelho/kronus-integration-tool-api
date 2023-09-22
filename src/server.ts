@@ -1,14 +1,16 @@
 import { app } from './app';
-import { validationIfExistUser } from './startup';
+import { validateFirstStart } from './startup';
 
 process.env.TZ = 'America/Sao_Paulo';
 
-app.listen(3333, () =>
+const PORT = 3333;
+
+app.listen(PORT, () =>
   console.log(
-    `Express started at http:localhost:3333 -> ${new Date().toLocaleString(
+    `Express started at http:localhost:${PORT} -> ${new Date().toLocaleString(
       'pt-Br'
     )}`
   )
 );
 
-validationIfExistUser();
+validateFirstStart();
