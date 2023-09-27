@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { CustomError } from '../../err/CustomError';
 import { SearchMovieUseCase } from './searchMovie/SearchMovieUseCase';
-import { TmdbDirectCallUseCase } from './tmdbDirectCall/tmdbDirectCallUseCase';
+import { TmdbDirectCallUseCase } from './tmdbDirectCall/TmdbDirectCallUseCase';
 
 export class TmdbController {
   constructor(
