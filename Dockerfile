@@ -8,7 +8,7 @@ COPY package.json ./
 COPY yarn.lock ./
 
 RUN corepack enable
-RUN yarn install --prod
+RUN yarn install
 RUN yarn prisma migrate dev --name init
 RUN yarn build
 
