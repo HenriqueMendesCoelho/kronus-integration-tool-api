@@ -1,6 +1,6 @@
 import { ITmdbRepository } from '../../../repositories/ITmdbRepository';
 import { CreateSummaryError } from '../errors/CreateSummaryError';
-import { MovieCreditsFoundById, MovieFoundById } from '../types/TypeMovies';
+import { MovieFoundById } from '../types/TypeMovies';
 
 export class SearchMovieUseCase {
   constructor(private tmdbRepository: ITmdbRepository) {}
