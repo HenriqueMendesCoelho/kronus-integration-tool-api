@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { CustomError } from '../../err/CustomError';
 import { SearchMovieUseCase } from './searchMovie/SearchMovieUseCase';
-import { TmdbDirectCallUseCase } from './tmdbDirectCall/tmdbDirectCallUseCase';
+import { TmdbDirectCallUseCase } from './tmdbDirectCall/TmdbDirectCallUseCase';
+import Ajv from 'ajv';
 
 export class TmdbController {
   constructor(
@@ -9,7 +10,28 @@ export class TmdbController {
     private tmdbDirectCallUseCase: TmdbDirectCallUseCase
   ) {}
 
+  private movieSummarySchema = {
+    type: 'object',
+    properties: {
+      id: { type: 'integer' },
+    },
+    required: ['id'],
+    additionalProperties: false,
+  };
+
   async movieSummary(request: Request, response: Response) {
+    const validate = new Ajv().compile(this.movieSummarySchema);
+    if (!validate(request.params)) {
+      return response
+        .status(400)
+        .json({
+          message: validate.errors?.map((err) => err.message).join(', '),
+          error: 400,
+          timestamp: Date.now(),
+        })
+        .send();
+    }
+
     const { id } = request.params;
 
     try {
