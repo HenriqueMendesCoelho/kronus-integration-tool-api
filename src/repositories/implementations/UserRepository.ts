@@ -15,7 +15,7 @@ export class UserRepository implements IUserRepository {
     } catch (error) {
       throw Error(error);
     } finally {
-      await this.disconnectDB();
+      await prisma.$disconnect();
     }
   }
   async findAll(): Promise<User[]> {
@@ -26,7 +26,7 @@ export class UserRepository implements IUserRepository {
     } catch (error) {
       throw Error(error);
     } finally {
-      await this.disconnectDB();
+      await prisma.$disconnect();
     }
   }
   async save(user: User): Promise<User> {
@@ -44,7 +44,7 @@ export class UserRepository implements IUserRepository {
     } catch (error) {
       throw Error(error);
     } finally {
-      await this.disconnectDB();
+      await prisma.$disconnect();
     }
   }
   async update(username: string, user: User): Promise<User> {
@@ -64,11 +64,7 @@ export class UserRepository implements IUserRepository {
     } catch (error) {
       throw Error(error);
     } finally {
-      await this.disconnectDB();
+      await prisma.$disconnect();
     }
-  }
-
-  private async disconnectDB(): Promise<void> {
-    prisma.$disconnect();
   }
 }

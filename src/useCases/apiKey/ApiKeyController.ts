@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { SearchApiKey } from './searchApiKey/SearchApiKey';
 import { CreateApiKeyUseCase } from './createApiKey/CreateApiKeyUseCase';
 import { DeleteApiKeyUseCase } from './deleteApiKey/DeleteApiKeyUseCase';
+import Ajv from 'ajv';
 
 export class ApiKeyController {
   constructor(
@@ -10,8 +11,27 @@ export class ApiKeyController {
     private deleteApiKey: DeleteApiKeyUseCase
   ) {}
 
+  private createScheme = {
+    type: 'object',
+    required: ['name'],
+    properties: {
+      name: {
+        type: 'string',
+      },
+    },
+  };
+
   async createKey(request: Request, response: Response): Promise<Response> {
     const { name } = request.body;
+    const validate = new Ajv().compile(this.createScheme);
+    if (!validate(request.body)) {
+      return response.status(400).json({
+        message: validate.errors?.map((err) => err.message).join(', '),
+        error: 400,
+        timestamp: Date.now(),
+      });
+    }
+
     try {
       const apiKey = await this.createApiKeyUseCase.execute(name);
       return response.status(200).json(apiKey).send();

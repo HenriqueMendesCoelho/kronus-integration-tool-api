@@ -15,7 +15,7 @@ export class ApiKeyRepository implements IApiKeyRepository {
     } catch (error) {
       throw new Error(error || 'Error during apikey query');
     } finally {
-      await this.disconnectDB();
+      await prisma.$disconnect();
     }
   }
 
@@ -25,7 +25,7 @@ export class ApiKeyRepository implements IApiKeyRepository {
     } catch (error) {
       throw new Error(error || 'Error during apikey query');
     } finally {
-      await this.disconnectDB();
+      await prisma.$disconnect();
     }
   }
 
@@ -40,7 +40,7 @@ export class ApiKeyRepository implements IApiKeyRepository {
     } catch (error) {
       throw new Error(error || 'Error during apikey creation');
     } finally {
-      await this.disconnectDB();
+      await prisma.$disconnect();
     }
   }
 
@@ -55,11 +55,7 @@ export class ApiKeyRepository implements IApiKeyRepository {
     } catch (error) {
       throw new Error(error || 'Error during apikey deletion');
     } finally {
-      await this.disconnectDB();
+      await prisma.$disconnect();
     }
-  }
-
-  private async disconnectDB(): Promise<void> {
-    prisma.$disconnect();
   }
 }

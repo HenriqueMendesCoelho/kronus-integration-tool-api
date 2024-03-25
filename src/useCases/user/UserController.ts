@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { CustomError } from '../../err/CustomError';
 import { VerifyJwtTokenUseCase } from '../jwt/verifyJwtToken/VerifyJwtTokenUseCase';
 import { UpdateUserUseCase } from './updateUser/UpdateUserUseCase';
+import Ajv from 'ajv';
 
 export class UserController {
   constructor(
@@ -9,12 +10,28 @@ export class UserController {
     private verifyJwtTokenUseCase: VerifyJwtTokenUseCase
   ) {}
 
+  private updatePasswordSchema = {
+    type: 'object',
+    required: ['password', 'new_password'],
+    properties: {
+      password: { type: 'string' },
+      new_password: { type: 'string' },
+    },
+  };
+
   async updatePassword(
     request: Request,
     response: Response
   ): Promise<Response> {
     const { password, new_password } = request.body;
-
+    const validate = new Ajv().compile(this.updatePasswordSchema);
+    if (!validate(request.body)) {
+      return response.status(400).json({
+        message: validate.errors?.map((err) => err.message).join(', '),
+        error: 400,
+        timestamp: Date.now(),
+      });
+    }
     if (this.isPasswordWeak(new_password)) {
       return this.errorResponse(
         'Password is weak, needs minumum 20 characters, uppercase, lowercase, number and special character',
@@ -23,8 +40,9 @@ export class UserController {
     }
 
     const jwt = request.headers['authorization'];
+    console.log(jwt);
     const usernameToUpdate = this.verifyJwtTokenUseCase.getUsername(jwt);
-
+    console.log(usernameToUpdate);
     try {
       await this.updateUserUseCase.execute(
         usernameToUpdate,
@@ -43,6 +61,7 @@ export class UserController {
           .status(error.statusCode)
           .send(...error.serializeErrors());
       }
+      console.error(error);
 
       return response.status(500).send(error);
     }

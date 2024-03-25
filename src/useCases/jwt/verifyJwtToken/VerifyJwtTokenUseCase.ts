@@ -25,6 +25,9 @@ export class VerifyJwtTokenUseCase {
 
     try {
       const isValid = jwt.verify(token, this.secret) as PayloadToken;
+      console.log(isValid);
+      console.log(isValid);
+      console.log(isValid);
       return isValid.username;
     } catch {
       return '';
