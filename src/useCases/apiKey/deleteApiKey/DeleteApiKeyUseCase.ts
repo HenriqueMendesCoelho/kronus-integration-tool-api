@@ -4,7 +4,12 @@ export class DeleteApiKeyUseCase {
   constructor(private apiKeyRepository: IApiKeyRepository) {}
 
   async execute(name: string) {
-    this.apiKeyRepository.delete(name);
-    return;
+    try {
+      this.apiKeyRepository.delete(name);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      return;
+    }
   }
 }

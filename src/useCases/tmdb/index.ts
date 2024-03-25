@@ -1,7 +1,7 @@
 import { TmdbRepository } from '../../repositories/implementations/TmdbRepository';
 import { SearchMovieUseCase } from './searchMovie/SearchMovieUseCase';
 import { TmdbController } from './TmdbController';
-import { TmdbDirectCallUseCase } from './tmdbDirectCall/tmdbDirectCallUseCase';
+import { TmdbDirectCallUseCase } from './tmdbDirectCall/TmdbDirectCallUseCase';
 
 const tmdbRepository = new TmdbRepository();
 

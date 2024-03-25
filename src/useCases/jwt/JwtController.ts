@@ -28,10 +28,7 @@ export class JwtController {
     }
 
     try {
-      const token = await this.createJwtTokenUseCase.create(
-        username.T,
-        password
-      );
+      const token = await this.createJwtTokenUseCase.create(username, password);
       return response.status(200).send(token);
     } catch (error) {
       if (error instanceof CustomError) {

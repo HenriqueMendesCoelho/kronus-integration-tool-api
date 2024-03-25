@@ -6,7 +6,7 @@ const router = Router();
 const basePathV1 = '/api/v1';
 
 router.put(`${basePathV1}/user`, secure, (request, response) => {
-  return userController.update(request, response);
+  return userController.updatePassword(request, response);
 });
 
 export { router as userRouter };

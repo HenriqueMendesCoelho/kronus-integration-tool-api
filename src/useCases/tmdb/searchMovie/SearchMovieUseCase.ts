@@ -8,50 +8,52 @@ export class SearchMovieUseCase {
   async summary(id: number) {
     const pathFindMovieById = `/movie/${id}`;
 
-    const moviePortuguese = (await this.tmdbRepository.callTmdb(
-      pathFindMovieById,
-      'get',
-      undefined,
-      {
-        language: 'pt-Br',
-        append_to_response: 'videos',
-      }
-    )) as MovieFoundById;
-    const movieEnglish = (await this.tmdbRepository.callTmdb(
-      pathFindMovieById,
-      'get',
-      undefined,
-      {
-        language: 'en-Us',
-        append_to_response: 'videos',
-      }
-    )) as MovieFoundById;
-    const movieCredits = (await this.tmdbRepository.callTmdb(
-      `/movie/${id}/credits`,
-      'get',
-      undefined,
-      {
-        language: 'en-Us',
-        append_to_response: 'videos',
-      }
-    )) as MovieCreditsFoundById;
-
-    if (!moviePortuguese || !movieEnglish || !movieCredits) {
-      return {};
-    }
-
     try {
-      const director = movieCredits.crew.filter((c) => c.job === 'Director');
+      const moviePortuguese = (await this.tmdbRepository.callTmdb(
+        pathFindMovieById,
+        'get',
+        undefined,
+        {
+          language: 'pt-Br',
+          append_to_response: 'videos,credits',
+        }
+      )) as MovieFoundById;
+
+      const movieEnglish = (await this.tmdbRepository.callTmdb(
+        pathFindMovieById,
+        'get',
+        undefined,
+        {
+          language: 'en-Us',
+          append_to_response: 'videos',
+        }
+      )) as MovieFoundById;
+
+      if (!moviePortuguese || !movieEnglish) {
+        return {};
+      }
+
+      const director = moviePortuguese.credits.crew.filter(
+        (c) => c.job === 'Director'
+      );
       const directorNames = director.map((d) => d.name).join(', ');
       const genres = moviePortuguese.genres.map((g) => g.name);
 
-      const trailerPortuguese = moviePortuguese.videos.results.find(
-        (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
-      );
+      const trailerPortuguese =
+        moviePortuguese.videos.results.find(
+          (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
+        ) ||
+        moviePortuguese.videos.results.find(
+          (v) => v.site === 'YouTube' && v.type === 'Trailer'
+        );
 
-      const trailerEnglish = movieEnglish.videos.results.find(
-        (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
-      );
+      const trailerEnglish =
+        movieEnglish.videos.results.find(
+          (v) => v.site === 'YouTube' && v.type === 'Trailer' && v.official
+        ) ||
+        movieEnglish.videos.results.find(
+          (v) => v.site === 'YouTube' && v.type === 'Trailer'
+        );
 
       return {
         tmdb_id: id,

@@ -51,6 +51,7 @@ export type MovieFoundById = {
       id: string;
     }>;
   };
+  credits: MovieCreditsFoundById;
 };
 
 export type MovieFoundByName = {

@@ -1,10 +1,10 @@
 {
   "name": "integration-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.ts",
   "repository": "https://github.com/HenriqueMendesCoelho/Integration-API.git",
   "author": "Henrique Mendes <henriquemendescoelho@gmail.com>",
-  "license": "MIT",
+  "private": true,
   "scripts": {
     "start": "tsx src/server.ts",
     "start:dev": "tsx watch src/server.ts",

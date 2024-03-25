@@ -4,7 +4,7 @@ import { createUserUseCase } from './useCases/user';
 
 const userRepository = new UserRepository();
 
-async function validationIfExistUser(): Promise<void> {
+async function validateFirstStart(): Promise<void> {
   const user = await userRepository.findAll();
 
   if (user.length) {
@@ -31,4 +31,4 @@ async function validationIfExistUser(): Promise<void> {
   );
 }
 
-export { validationIfExistUser };
+export { validateFirstStart };
