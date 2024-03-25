@@ -7,6 +7,8 @@ COPY prisma ./prisma
 COPY package.json ./
 COPY yarn.lock ./
 
+RUN apt-get update -y && apt-get install -y openssl
+
 RUN corepack enable
 RUN yarn install
 RUN yarn prisma migrate dev --name init
