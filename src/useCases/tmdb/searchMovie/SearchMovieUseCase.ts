@@ -9,25 +9,17 @@ export class SearchMovieUseCase {
     const pathFindMovieById = `/movie/${id}`;
 
     try {
-      const moviePortuguese = (await this.tmdbRepository.callTmdb(
-        pathFindMovieById,
-        'get',
-        undefined,
-        {
-          language: 'pt-Br',
-          append_to_response: 'videos,credits',
-        }
-      )) as MovieFoundById;
-
-      const movieEnglish = (await this.tmdbRepository.callTmdb(
-        pathFindMovieById,
-        'get',
-        undefined,
-        {
-          language: 'en-Us',
-          append_to_response: 'videos',
-        }
-      )) as MovieFoundById;
+      const [moviePortuguese, movieEnglish]: [MovieFoundById, MovieFoundById] =
+        await Promise.all([
+          this.tmdbRepository.callTmdb(pathFindMovieById, 'get', undefined, {
+            language: 'pt-Br',
+            append_to_response: 'videos,credits',
+          }),
+          this.tmdbRepository.callTmdb(pathFindMovieById, 'get', undefined, {
+            language: 'en-Us',
+            append_to_response: 'videos',
+          }),
+        ]);
 
       if (!moviePortuguese || !movieEnglish) {
         return {};
