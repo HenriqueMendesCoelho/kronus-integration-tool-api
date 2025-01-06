@@ -92,8 +92,23 @@ export class SearchMovieUseCase {
       return cachedTranslation;
     }
 
+    let textToTranslate = movieEnglish.overview;
+    if (!textToTranslate) {
+      const pathFindMovieById = `/movie/${movieEnglish.id}`;
+      const res = (await this.tmdbRepository.callTmdb(
+        pathFindMovieById,
+        'get',
+        undefined,
+        {
+          language: movieEnglish.original_language,
+        }
+      )) as MovieFoundById;
+
+      textToTranslate = res.overview;
+    }
+
     const translatedOverview = await this.libreTranslateRepository
-      .translate(movieEnglish.overview)
+      .translate(textToTranslate)
       .catch((err) => {
         console.error('Error translating movie overview', err);
         return '';
