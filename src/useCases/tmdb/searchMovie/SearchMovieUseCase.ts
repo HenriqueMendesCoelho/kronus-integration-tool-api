@@ -114,9 +114,9 @@ export class SearchMovieUseCase {
         return '';
       });
 
-    const ex3days = 259200;
+    const daysToExpire = 3;
     await this.redisClient
-      .set(cacheKey, translatedOverview, 'EX', ex3days)
+      .set(cacheKey, translatedOverview, 'EX', daysToExpire * 24 * 60 * 60)
       .catch((err) => {
         console.error('Error saving movie overview in redis', err);
       });
