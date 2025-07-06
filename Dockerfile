@@ -1,22 +1,25 @@
-FROM node:20.5.1-slim
+FROM node:24.3.0-alpine AS build
 
 WORKDIR /usr/src/app
 
-COPY src ./src
-COPY prisma ./prisma
-COPY package.json ./
-COPY yarn.lock ./
+COPY . .
 
-RUN apt-get update -y && apt-get install -y openssl
+RUN corepack enable && \
+    corepack prepare pnpm@latest --activate && \
+    pnpm install --frozen-lockfile
 
-RUN corepack enable
-RUN yarn install
-RUN yarn prisma migrate dev --name init
-RUN yarn build
-
-RUN rm -r ./src
+RUN pnpm build
 
 ENV TZ=America/Sao_Paulo
+
+FROM node:24.3.0-alpine AS prod
+
+WORKDIR /usr/src/app
+
+ENV TZ=America/Sao_Paulo
+
+COPY --from=build /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/node_modules ./node_modules
 
 EXPOSE 3333
 CMD [ "node", "./dist/server.js" ]
