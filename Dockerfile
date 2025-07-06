@@ -17,7 +17,7 @@ FROM node:24.3.0-alpine AS prod
 WORKDIR /usr/src/app
 
 # OpenSSL 1.1 is required for Prisma
-RUN apk add --no-cache openssl1.1-compat
+RUN apk add --no-cache openssl
 
 ENV TZ=America/Sao_Paulo
 
