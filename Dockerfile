@@ -8,6 +8,9 @@ RUN corepack enable && \
     corepack prepare pnpm@latest --activate && \
     pnpm install --frozen-lockfile
 
+RUN pnpm prisma generate && \
+    pnpm prisma migrate deploy
+
 RUN pnpm build
 
 ENV TZ=America/Sao_Paulo
