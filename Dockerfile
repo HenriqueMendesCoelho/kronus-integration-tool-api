@@ -1,4 +1,4 @@
-FROM node:24.3.0-alpine AS build
+FROM node:24.3.0-slim AS build
 
 WORKDIR /usr/src/app
 
@@ -12,12 +12,12 @@ RUN pnpm build
 
 ENV TZ=America/Sao_Paulo
 
-FROM node:24.3.0-alpine AS prod
+FROM node:24.3.0-slim AS prod
 
 WORKDIR /usr/src/app
 
 # OpenSSL 1.1 is required for Prisma
-RUN apk add --no-cache openssl
+RUN apt-get update -y && apt-get install -y openssl
 
 ENV TZ=America/Sao_Paulo
 
