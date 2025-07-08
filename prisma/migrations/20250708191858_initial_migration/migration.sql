@@ -1,15 +1,19 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "salt" TEXT NOT NULL
+    "salt" TEXT NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "ApiKey" (
-    "key" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL
+    "key" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "ApiKey_pkey" PRIMARY KEY ("key")
 );
 
 -- CreateIndex
