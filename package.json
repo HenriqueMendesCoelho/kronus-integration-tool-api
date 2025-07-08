@@ -6,8 +6,7 @@
   "author": "Henrique Mendes <henriquemendescoelho@gmail.com>",
   "private": true,
   "scripts": {
-    "start": "tsx src/server.ts",
-    "start:dev": "tsx watch src/server.ts",
+    "start": "tsx watch src/server.ts",
     "build": "tsup src"
   },
   "dependencies": {

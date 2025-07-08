@@ -7,7 +7,7 @@ const PORT = 3333;
 
 app.listen(PORT, () =>
   console.log(
-    `Express started at http:localhost:${PORT} -> ${new Date().toLocaleString(
+    `Express started at http://0.0.0.0:${PORT} -> ${new Date().toLocaleString(
       'pt-Br'
     )}`
   )
