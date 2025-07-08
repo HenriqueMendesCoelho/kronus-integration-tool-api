@@ -26,11 +26,6 @@ RUN apk add --no-cache openssl
 
 ENV TZ=America/Sao_Paulo
 
-COPY --from=build /usr/src/app/db ./db
-
-# Ajusta permissão da pasta e do arquivo do SQLite
-RUN chmod -R 777 ./db
-
 COPY --from=build /usr/src/app/prisma ./prisma
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
