@@ -30,5 +30,8 @@ COPY --from=build /usr/src/app/prisma ./prisma
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 
+RUN corepack enable && \
+    corepack prepare pnpm@latest --activate
+
 EXPOSE 3333
 CMD ["sh", "-c", "pnpm prisma migrate deploy && node ./dist/server.js"]
