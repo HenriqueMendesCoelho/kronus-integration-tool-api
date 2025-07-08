@@ -14,7 +14,7 @@ export type MovieFoundById = {
   imdb_id: string;
   original_language: string;
   original_title: string;
-  overview: string;
+  overview?: string;
   popularity: string;
   poster_path: string;
   production_companies: Array<{

@@ -13,7 +13,7 @@ export class TmdbController {
   private movieSummarySchema = {
     type: 'object',
     properties: {
-      id: { type: 'integer' },
+      id: { type: 'string' },
     },
     required: ['id'],
     additionalProperties: false,

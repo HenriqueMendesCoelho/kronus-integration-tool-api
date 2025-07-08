@@ -1,33 +1,20 @@
+import { ILibreTranslateRepository } from '../../../repositories/ILibreTranslateRepository';
 import { ITmdbRepository } from '../../../repositories/ITmdbRepository';
 import { CreateSummaryError } from '../errors/CreateSummaryError';
-import { MovieCreditsFoundById, MovieFoundById } from '../types/TypeMovies';
+import { MovieFoundById } from '../types/TypeMovies';
+import Redis from 'ioredis';
 
 export class SearchMovieUseCase {
-  constructor(private tmdbRepository: ITmdbRepository) {}
+  constructor(
+    private tmdbRepository: ITmdbRepository,
+    private libreTranslateRepository: ILibreTranslateRepository,
+    private redisClient: Redis
+  ) {}
 
   async summary(id: number) {
-    const pathFindMovieById = `/movie/${id}`;
-
     try {
-      const moviePortuguese = (await this.tmdbRepository.callTmdb(
-        pathFindMovieById,
-        'get',
-        undefined,
-        {
-          language: 'pt-Br',
-          append_to_response: 'videos,credits',
-        }
-      )) as MovieFoundById;
-
-      const movieEnglish = (await this.tmdbRepository.callTmdb(
-        pathFindMovieById,
-        'get',
-        undefined,
-        {
-          language: 'en-Us',
-          append_to_response: 'videos',
-        }
-      )) as MovieFoundById;
+      const [moviePortuguese, movieEnglish]: [MovieFoundById, MovieFoundById] =
+        await this.searchMovie(id);
 
       if (!moviePortuguese || !movieEnglish) {
         return {};
@@ -66,7 +53,7 @@ export class SearchMovieUseCase {
         url_image_english: movieEnglish?.poster_path,
         portuguese_url_trailer: trailerPortuguese?.key || '',
         english_url_trailer: trailerEnglish?.key || '',
-        description: moviePortuguese?.overview,
+        description: await this.getMovieOverview(moviePortuguese, movieEnglish),
         genres,
         release_date: moviePortuguese?.release_date,
         runtime: moviePortuguese?.runtime,
@@ -74,5 +61,66 @@ export class SearchMovieUseCase {
     } catch (error) {
       throw new CreateSummaryError(error);
     }
+  }
+
+  private async searchMovie(
+    id: number
+  ): Promise<[MovieFoundById, MovieFoundById]> {
+    const pathFindMovieById = `/movie/${id}`;
+    return await Promise.all([
+      this.tmdbRepository.callTmdb(pathFindMovieById, 'get', undefined, {
+        language: 'pt-Br',
+        append_to_response: 'videos,credits',
+      }),
+      this.tmdbRepository.callTmdb(pathFindMovieById, 'get', undefined, {
+        language: 'en-Us',
+        append_to_response: 'videos',
+      }),
+    ]);
+  }
+
+  private async getMovieOverview(
+    moviePortuguese: MovieFoundById,
+    movieEnglish: MovieFoundById
+  ): Promise<string> {
+    if (moviePortuguese.overview) {
+      return moviePortuguese.overview;
+    }
+    const cacheKey = `movie:overview:${moviePortuguese.id}`;
+    const cachedTranslation = await this.redisClient.get(cacheKey);
+    if (cachedTranslation) {
+      return cachedTranslation;
+    }
+
+    let textToTranslate = movieEnglish.overview;
+    if (!textToTranslate) {
+      const pathFindMovieById = `/movie/${movieEnglish.id}`;
+      const res = (await this.tmdbRepository.callTmdb(
+        pathFindMovieById,
+        'get',
+        undefined,
+        {
+          language: movieEnglish.original_language,
+        }
+      )) as MovieFoundById;
+
+      textToTranslate = res.overview;
+    }
+
+    const translatedOverview = await this.libreTranslateRepository
+      .translate(textToTranslate)
+      .catch((err) => {
+        console.error('Error translating movie overview', err);
+        return '';
+      });
+
+    const daysToExpire = 3;
+    await this.redisClient
+      .set(cacheKey, translatedOverview, 'EX', daysToExpire * 24 * 60 * 60)
+      .catch((err) => {
+        console.error('Error saving movie overview in redis', err);
+      });
+
+    return translatedOverview;
   }
 }
