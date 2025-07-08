@@ -1,6 +1,9 @@
-FROM node:24.3.0-slim AS build
+FROM node:24.3.0-alpine AS build
 
 WORKDIR /usr/src/app
+
+# OpenSSL 1.1 is required for Prisma
+RUN apk add --no-cache openssl
 
 COPY . .
 
@@ -15,15 +18,21 @@ RUN pnpm build
 
 ENV TZ=America/Sao_Paulo
 
-FROM node:24.3.0-slim AS prod
+FROM node:24.3.0-alpine AS prod
 
 WORKDIR /usr/src/app
 
 # OpenSSL 1.1 is required for Prisma
-RUN apt-get update -y && apt-get install -y openssl
+RUN apk add --no-cache openssl
 
 ENV TZ=America/Sao_Paulo
 
+COPY --from=build /usr/src/app/db ./db
+
+# Ajusta permissão da pasta e do arquivo do SQLite
+RUN chmod -R 777 ./db
+
+COPY --from=build /usr/src/app/prisma ./prisma
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 
