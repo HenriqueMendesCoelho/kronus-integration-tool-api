@@ -2,6 +2,9 @@ FROM node:24.3.0-alpine AS build
 
 WORKDIR /usr/src/app
 
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
 # OpenSSL 1.1 is required for Prisma
 RUN apk add --no-cache openssl
 
