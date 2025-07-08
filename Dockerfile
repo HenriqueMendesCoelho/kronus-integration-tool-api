@@ -2,9 +2,6 @@ FROM node:24.3.0-alpine AS build
 
 WORKDIR /usr/src/app
 
-ARG DATABASE_URL
-ENV DATABASE_URL=$DATABASE_URL
-
 # OpenSSL 1.1 is required for Prisma
 RUN apk add --no-cache openssl
 
@@ -14,8 +11,7 @@ RUN corepack enable && \
     corepack prepare pnpm@latest --activate && \
     pnpm install --frozen-lockfile
 
-RUN pnpm prisma generate && \
-    pnpm prisma migrate deploy
+RUN pnpm prisma generate
 
 RUN pnpm build
 
@@ -40,4 +36,4 @@ COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 
 EXPOSE 3333
-CMD [ "node", "./dist/server.js" ]
+CMD ["sh", "-c", "pnpm prisma migrate deploy && node ./dist/server.js"]
