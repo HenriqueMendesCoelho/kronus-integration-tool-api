@@ -6,14 +6,15 @@ import Ajv from 'ajv';
 
 export class TmdbController {
   constructor(
-    private searchMovieUseCase: SearchMovieUseCase,
-    private tmdbDirectCallUseCase: TmdbDirectCallUseCase
+    private readonly searchMovieUseCase: SearchMovieUseCase,
+    private readonly tmdbDirectCallUseCase: TmdbDirectCallUseCase
   ) {}
 
-  private movieSummarySchema = {
+  private readonly movieSummarySchema = {
     type: 'object',
     properties: {
       id: { type: 'string' },
+      'append-credits': { type: 'string', enum: ['true', 'false'] },
     },
     required: ['id'],
     additionalProperties: false,
@@ -21,7 +22,7 @@ export class TmdbController {
 
   async movieSummary(request: Request, response: Response) {
     const validate = new Ajv().compile(this.movieSummarySchema);
-    if (!validate(request.params)) {
+    if (!validate({ ...request.params, ...request.query })) {
       return response
         .status(400)
         .json({
@@ -33,9 +34,13 @@ export class TmdbController {
     }
 
     const { id } = request.params;
+    const { 'append-credits': appendCredits } = request.query;
 
     try {
-      const movieResume = await this.searchMovieUseCase.summary(parseInt(id));
+      const movieResume = await this.searchMovieUseCase.summary(
+        parseInt(id),
+        appendCredits === 'true'
+      );
       if (!movieResume) {
         return response.status(204).send();
       }

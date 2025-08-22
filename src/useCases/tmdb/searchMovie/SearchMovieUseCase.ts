@@ -6,12 +6,12 @@ import Redis from 'ioredis';
 
 export class SearchMovieUseCase {
   constructor(
-    private tmdbRepository: ITmdbRepository,
-    private libreTranslateRepository: ILibreTranslateRepository,
-    private redisClient: Redis
+    private readonly tmdbRepository: ITmdbRepository,
+    private readonly libreTranslateRepository: ILibreTranslateRepository,
+    private readonly redisClient: Redis
   ) {}
 
-  async summary(id: number) {
+  async summary(id: number, appendCredits = false) {
     try {
       const [moviePortuguese, movieEnglish]: [MovieFoundById, MovieFoundById] =
         await this.searchMovie(id);
@@ -57,6 +57,14 @@ export class SearchMovieUseCase {
         genres,
         release_date: moviePortuguese?.release_date,
         runtime: moviePortuguese?.runtime,
+        ...(appendCredits
+          ? {
+              credits: {
+                cast: moviePortuguese.credits.cast,
+                crew: moviePortuguese.credits.crew,
+              },
+            }
+          : {}),
       };
     } catch (error) {
       throw new CreateSummaryError(error);
