@@ -70,6 +70,11 @@ export class SearchMovieUseCase {
               },
             }
           : {}),
+        ...(append.includes('vote')
+          ? {
+              vote_average: moviePortuguese.vote_average,
+            }
+          : {}),
       };
     } catch (error) {
       throw new CreateSummaryError(error);
