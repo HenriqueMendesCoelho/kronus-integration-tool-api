@@ -11,7 +11,7 @@ export class SearchMovieUseCase {
     private readonly redisClient: Redis
   ) {}
 
-  async summary(id: number, appendCredits = false) {
+  async summary(id: number, append = '') {
     try {
       const [moviePortuguese, movieEnglish]: [MovieFoundById, MovieFoundById] =
         await this.searchMovie(id);
@@ -57,7 +57,12 @@ export class SearchMovieUseCase {
         genres,
         release_date: moviePortuguese?.release_date,
         runtime: moviePortuguese?.runtime,
-        ...(appendCredits
+        ...(append.includes('english')
+          ? {
+              english_description: movieEnglish.overview,
+            }
+          : {}),
+        ...(append.includes('credits')
           ? {
               credits: {
                 cast: moviePortuguese.credits.cast,

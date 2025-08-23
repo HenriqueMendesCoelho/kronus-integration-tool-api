@@ -14,7 +14,7 @@ export class TmdbController {
     type: 'object',
     properties: {
       id: { type: 'string' },
-      'append-credits': { type: 'string', enum: ['true', 'false'] },
+      append: { type: 'string' },
     },
     required: ['id'],
     additionalProperties: false,
@@ -34,12 +34,20 @@ export class TmdbController {
     }
 
     const { id } = request.params;
-    const { 'append-credits': appendCredits } = request.query;
+    const { append } = request.query;
+    let appendStr: string | undefined;
+    if (typeof append === 'string') {
+      appendStr = append;
+    } else if (append) {
+      appendStr = JSON.stringify(append);
+    } else {
+      appendStr = undefined;
+    }
 
     try {
       const movieResume = await this.searchMovieUseCase.summary(
         parseInt(id),
-        appendCredits === 'true'
+        appendStr
       );
       if (!movieResume) {
         return response.status(204).send();
