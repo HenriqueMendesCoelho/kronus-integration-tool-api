@@ -10,7 +10,7 @@ app.use(logger);
 
 const allowedOrigins = [
   'http://localhost:4200',
-  'https://kit.app.kronusboss.com',
+  'https://api-kit.kronusboss.com',
 ];
 const corsOpts: cors.CorsOptions = {
   origin: allowedOrigins,
